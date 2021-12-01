@@ -1,7 +1,7 @@
 // puzzle: https://adventofcode.com/2021/day/1
 #time
 
-let input = System.IO.File.ReadAllLines "inputs/day01.txt" |> Seq.map int
+let input = "inputs/day01.txt" |> System.IO.File.ReadAllLines |> Seq.map int
 let deeper (x,y) = x < y 
 
 // Answer 1
