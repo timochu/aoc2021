@@ -5,7 +5,7 @@ let input = System.IO.File.ReadAllLines "inputs/day01.txt" |> Seq.map int
 let deeper (x,y) = x < y 
 
 // Answer 1
-Seq.pairwise input |> Seq.where deeper |> Seq.length |> printfn "%i"
+input |> Seq.pairwise |> Seq.where deeper |> Seq.length |> printfn "%i"
 
 // Answer 2
-Seq.windowed 3 input |> Seq.map Seq.sum |> Seq.pairwise |> Seq.where deeper |> Seq.length |> printfn "%i"
+input |> Seq.windowed 3 |> Seq.map Seq.sum |> Seq.pairwise |> Seq.where deeper |> Seq.length |> printfn "%i"
