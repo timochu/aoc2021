@@ -1,7 +1,9 @@
 // puzzle: https://adventofcode.com/2021/day/2
 #time
 
-let toCommand (c: string) = c.Split ' ' |> fun x -> (x.[0], int x.[1])
+let toCommand (line: string) = 
+    line.Split ' ' |> fun command -> (command |> Seq.head, command |> Seq.last |> int)
+    
 let commands = "inputs/day02.txt" |> System.IO.File.ReadAllLines |> Seq.map toCommand
 
 let position commands =
