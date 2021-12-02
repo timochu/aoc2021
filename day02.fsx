@@ -1,10 +1,11 @@
 // puzzle: https://adventofcode.com/2021/day/2
 #time
 
-let toCommand (line: string) = 
-    line.Split ' ' |> fun command -> command.[0], int command.[1]
-    
-let commands = "inputs/day02.txt" |> System.IO.File.ReadAllLines |> Seq.map toCommand
+let commands = 
+    "inputs/day02.txt" 
+    |> System.IO.File.ReadAllLines 
+    |> Seq.map (fun line -> 
+        line.Split ' ' |> fun command -> command.[0], int command.[1])
 
 // Answer 1
 commands
