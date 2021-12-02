@@ -2,7 +2,7 @@
 #time
 
 let toCommand (line: string) = 
-    line.Split ' ' |> fun command -> (command |> Seq.head, command |> Seq.last |> int)
+    line.Split ' ' |> fun command -> command |> Seq.head, command |> Seq.last |> int
     
 let commands = "inputs/day02.txt" |> System.IO.File.ReadAllLines |> Seq.map toCommand
 
