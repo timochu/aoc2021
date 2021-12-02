@@ -1,24 +1,36 @@
 // puzzle: https://adventofcode.com/2021/day/2
 #time
 
-type Direction = Up | Down | Forward
-type Command = 
-    { Direction: Direction
-      Amount: int }
+type Command =  { Direction: string; Amount: int }
 
 let toCommand (c: string) =
     let parts = c.Split ' '
-    { Amount = parts.[1] |> int
-      Direction = parts.[0] |> function 
-        | "up" -> Up
-        | "down" -> Down
-        | _ -> Forward
-       }
+    { Direction = parts.[0]
+      Amount = parts.[1] |> int }
 
 let commands = "inputs/day02.txt" |> System.IO.File.ReadAllLines |> Seq.map toCommand
 
-let down = commands |> Seq.where (fun c -> c.Direction = Down) |> Seq.sumBy (fun c -> c.Amount)
-let up = commands |> Seq.where (fun c -> c.Direction = Up) |> Seq.sumBy (fun c -> c.Amount)
-let forward = commands |> Seq.where (fun c -> c.Direction = Forward) |> Seq.sumBy (fun c -> c.Amount)
-let answer1 = (down-up)*forward
-printfn "%i" answer1
+let position commands =
+    ((0,0), commands) 
+    ||> Seq.fold (fun (distance, depth) command -> 
+        match command.Direction with
+        | "up" ->  (distance, depth - command.Amount)
+        | "down" ->  (distance, depth + command.Amount)
+        | _ ->  (distance + command.Amount, depth))
+    |> fun (distance, depth) -> distance * depth
+
+let position2 commands =
+    ((0,0,0), commands)
+    ||> Seq.fold (fun (distance, depth, aim) command -> 
+        match command.Direction with
+        | "up" ->  (distance, depth, aim - command.Amount)
+        | "down" ->  (distance, depth, aim + command.Amount)
+        | _ ->  (distance + command.Amount, depth + (command.Amount * aim), aim))
+    |> fun (distance, depth, _) -> distance * depth
+
+// Answer 1
+commands |> position |> printfn "%i"
+
+// Answer 2
+commands |> position2 |> printfn "%i"
+
