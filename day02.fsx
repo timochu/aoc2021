@@ -11,22 +11,20 @@ let toCommand (c: string) =
 let commands = "inputs/day02.txt" |> System.IO.File.ReadAllLines |> Seq.map toCommand
 
 let position commands =
-    ((0,0), commands) 
-    ||> Seq.fold (fun (distance, depth) command -> 
+    let folder (distance, depth) command = 
         match command.Direction with
         | "up" ->  (distance, depth - command.Amount)
         | "down" ->  (distance, depth + command.Amount)
-        | _ ->  (distance + command.Amount, depth))
-    |> fun (distance, depth) -> distance * depth
+        | _ ->  (distance + command.Amount, depth)
+    ((0,0), commands) ||> Seq.fold folder |> fun (distance, depth) -> distance * depth
 
 let position2 commands =
-    ((0,0,0), commands)
-    ||> Seq.fold (fun (distance, depth, aim) command -> 
+    let folder (distance, depth, aim) command =
         match command.Direction with
         | "up" ->  (distance, depth, aim - command.Amount)
         | "down" ->  (distance, depth, aim + command.Amount)
-        | _ ->  (distance + command.Amount, depth + (command.Amount * aim), aim))
-    |> fun (distance, depth, _) -> distance * depth
+        | _ ->  (distance + command.Amount, depth + (command.Amount * aim), aim)
+    ((0,0,0), commands) ||> Seq.fold folder |> fun (distance, depth, _) -> distance * depth
 
 // Answer 1
 commands |> position |> printfn "%i"
