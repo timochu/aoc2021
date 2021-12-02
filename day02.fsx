@@ -7,8 +7,8 @@ let toCommand (line: string) =
 let commands = "inputs/day02.txt" |> System.IO.File.ReadAllLines |> Seq.map toCommand
 
 // Answer 1
-commands |> 
-Seq.fold (fun (distance, depth) (direction, amount) ->
+commands
+|> Seq.fold (fun (distance, depth) (direction, amount) ->
     match direction with
     | "up"   -> distance, depth - amount
     | "down" -> distance, depth + amount
@@ -17,8 +17,8 @@ Seq.fold (fun (distance, depth) (direction, amount) ->
 |> printfn "%i"
 
 // Answer 2
-commands |> 
-Seq.fold (fun (distance, depth, aim) (direction, amount) ->
+commands 
+|> Seq.fold (fun (distance, depth, aim) (direction, amount) ->
     match direction with
     | "up"   -> distance, depth, aim - amount
     | "down" -> distance, depth, aim + amount
