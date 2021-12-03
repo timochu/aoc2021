@@ -13,20 +13,14 @@ diagnostics
 |> printfn "answer 1: %i"
 
 // Answer 2
-let mostCommon i transposed = 
-    transposed |> Seq.item i |> Seq.countBy id |> Seq.sortByDescending fst |> Seq.maxBy snd |> fst
-
-let leastCommon i transposed  = 
-    transposed |> Seq.item i |> Seq.countBy id |> Seq.sortBy fst |> Seq.minBy snd |> fst
-
-let rec rating i comparator diagnostics =
-    match diagnostics |> Seq.length with
-    | 1 -> diagnostics |> Seq.head |> fun bits -> System.Convert.ToInt32 (bits, 2)
+let rec rating i comparator diagnostics  =
+    match diagnostics with
+    | [| result |] -> result |> fun bits -> System.Convert.ToInt32 (bits, 2)
     | _ -> 
-        let common = diagnostics |> Seq.transpose |> comparator i
-        diagnostics |> Seq.where (fun bits -> bits.[i] = common) |> rating (i+1) comparator
+        let common = diagnostics |> Seq.transpose |> Seq.item i |> Seq.countBy id |> comparator |> fst
+        diagnostics |> Array.where (fun bits -> bits.[i] = common) |> rating (i+1) comparator
 
-let oxygen = diagnostics |> rating 0 mostCommon
-let co2 = diagnostics |> rating 0 leastCommon
+let oxygen = diagnostics |> rating 0 (Seq.sortByDescending fst >> Seq.maxBy snd)
+let co2 = diagnostics |> rating 0 (Seq.sortBy fst >> Seq.minBy snd )
 
 printfn "answer 2: %i" (oxygen * co2)
