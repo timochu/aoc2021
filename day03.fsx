@@ -17,9 +17,9 @@ let rec getRating i bitCriteria items  =
     | [| result |] -> 
         result |> fun bits -> System.Convert.ToInt32 (bits, 2)
     | remaining ->
-        let bit = remaining |> Seq.transpose |> Seq.item i |> Seq.countBy id |> bitCriteria |> fst
+        let bit = remaining |> Seq.transpose |> Seq.item i |> Seq.countBy id |> bitCriteria
         remaining |> Array.where (fun bits -> bits.[i] = bit) |> getRating (i+1) bitCriteria
 
-let oxygen = diagnostics |> getRating 0 (Seq.sortByDescending fst >> Seq.maxBy snd)
-let co2 = diagnostics |> getRating 0 (Seq.sortBy fst >> Seq.minBy snd)
+let oxygen = diagnostics |> getRating 0 (Seq.sortByDescending fst >> Seq.maxBy snd >> fst)
+let co2 = diagnostics |> getRating 0 (Seq.sortBy fst >> Seq.minBy snd >> fst)
 printfn "%i" (oxygen * co2)
