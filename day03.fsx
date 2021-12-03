@@ -1,5 +1,4 @@
-// puzzle: https://adventofcode.com/2021/day/3
-#time
+#time // puzzle: https://adventofcode.com/2021/day/3
 
 let diagnostics = "inputs/day03.txt" |> System.IO.File.ReadAllLines 
 
@@ -10,17 +9,17 @@ diagnostics
 |> System.String.Concat
 |> fun bits -> System.Convert.ToUInt16 (bits, 2)
 |> fun gamma -> gamma * (~~~gamma <<< 4 >>> 4)
-|> printfn "answer 1: %i"
+|> printfn "%i"
 
 // Answer 2
-let rec rating i comparator diagnostics  =
-    match diagnostics with
-    | [| result |] -> result |> fun bits -> System.Convert.ToInt32 (bits, 2)
-    | _ -> 
-        let common = diagnostics |> Seq.transpose |> Seq.item i |> Seq.countBy id |> comparator |> fst
-        diagnostics |> Array.where (fun bits -> bits.[i] = common) |> rating (i+1) comparator
+let rec getRating i bitCriteria items  =
+    match items with
+    | [| result |] -> 
+        result |> fun bits -> System.Convert.ToInt32 (bits, 2)
+    | remaining ->
+        let bit = remaining |> Seq.transpose |> Seq.item i |> Seq.countBy id |> bitCriteria |> fst
+        remaining |> Array.where (fun bits -> bits.[i] = bit) |> getRating (i+1) bitCriteria
 
-let oxygen = diagnostics |> rating 0 (Seq.sortByDescending fst >> Seq.maxBy snd)
-let co2 = diagnostics |> rating 0 (Seq.sortBy fst >> Seq.minBy snd )
-
-printfn "answer 2: %i" (oxygen * co2)
+let oxygen = diagnostics |> getRating 0 (Seq.sortByDescending fst >> Seq.maxBy snd)
+let co2 = diagnostics |> getRating 0 (Seq.sortBy fst >> Seq.minBy snd)
+printfn "%i" (oxygen * co2)
