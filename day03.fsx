@@ -7,7 +7,7 @@ let diagnostics = "inputs/day03.txt" |> System.IO.File.ReadAllLines
 diagnostics 
 |> Seq.transpose
 |> Seq.map (Seq.countBy id >> Seq.maxBy snd >> fst) 
-|> Seq.toArray |> System.String 
+|> System.String.Concat
 |> fun bits -> System.Convert.ToUInt16 (bits, 2)
 |> fun gamma -> gamma * (~~~gamma <<< 4 >>> 4)
 |> printfn "%i"
