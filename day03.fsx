@@ -12,14 +12,18 @@ diagnostics
 |> printfn "%i"
 
 // Answer 2
-let rec getRating i bitCriteria items  =
-    match items with
-    | [| result |] -> 
-        result |> fun bits -> System.Convert.ToInt32 (bits, 2)
-    | remaining ->
-        let bit = remaining |> Seq.transpose |> Seq.item i |> Seq.countBy id |> bitCriteria
-        remaining |> Array.where (fun bits -> bits.[i] = bit) |> getRating (i+1) bitCriteria
+type Criteria = Oxygen | CarbonDioxide
 
-let oxygen = diagnostics |> getRating 0 (Seq.sortByDescending fst >> Seq.maxBy snd >> fst)
-let co2 = diagnostics |> getRating 0 (Seq.sortBy fst >> Seq.minBy snd >> fst)
-printfn "%i" (oxygen * co2)
+let rec getRating i items criteria =
+    match items with
+    | [| result |] -> System.Convert.ToInt32 (result, 2)
+    | _ ->
+        let bitSelector = 
+            match criteria with
+            | Oxygen -> Seq.sortByDescending fst >> Seq.maxBy snd
+            | CarbonDioxide -> Seq.sortBy fst >> Seq.minBy snd
+        let bit = items |> Seq.transpose |> Seq.item i |> Seq.countBy id |> bitSelector |> fst
+        let remaining = items |> Array.where (fun bits -> bits.[i] = bit)
+        getRating (i+1) remaining criteria
+
+[Oxygen; CarbonDioxide] |> Seq.map (getRating 0 diagnostics) |> Seq.reduce (*) |> printfn "%i"
