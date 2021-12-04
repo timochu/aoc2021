@@ -10,7 +10,7 @@ let toBoard (s : string) =
         let vertical = horizontal |> Array.transpose
         { All = all ; Lines = horizontal |> Array.append vertical }
 
-let isWinner drawn board = board.Lines |> Array.exists (Array.forall (fun number -> drawn |> Array.contains number ))
+let isWinner drawn board = board.Lines |> Array.exists (Array.forall (fun number -> Array.contains number drawn))
 
 let calculateScore drawn board = board.All |> Array.except drawn |> Array.sum |> ( * ) (Array.last drawn)
 
