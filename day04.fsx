@@ -1,34 +1,33 @@
 #time // puzzle: https://adventofcode.com/2021/day/4
 
 type Board = 
-    { All: int seq
-      Horizontal: int seq seq
-      Vertical: int seq seq }
+    { All: int array
+      Lines: int array array }
 
 let toBoard (s : string) = 
     s.Split ([|' '; '\n'|], System.StringSplitOptions.RemoveEmptyEntries) 
-    |> Seq.map int 
+    |> Array.map int 
     |> (fun all -> 
-        let horizontal = all |> Seq.chunkBySize 5 |> Seq.map Array.toSeq
-        let vertical = horizontal |> Seq.transpose
-        { All = all ; Horizontal = horizontal ; Vertical = vertical } )
+        let horizontal = all |> Array.chunkBySize 5
+        let vertical = horizontal |> Array.transpose
+        { All = all ; Lines = horizontal |> Array.append vertical } )
 
-let getAnswer drawn board =
-    let checkWin = Seq.exists (fun line -> line |> Seq.forall(fun number -> drawn |> Seq.contains number))
-    match checkWin board.Horizontal, checkWin board.Vertical with
-    | false, false -> None
-    | _, _ -> board.All |> Seq.except drawn |> Seq.sum |> (*) (Seq.last drawn) |> Some
+let isWinner drawn board = board.Lines |> Array.exists (fun line -> line |> Array.forall(fun number -> drawn |> Array.contains number))
 
-let rec score iteration numbers answer boards =
-    match answer with
-    | Some score -> score
-    | None ->
-        let drawn = numbers |> Seq.take iteration
-        let a = boards |> Seq.tryPick (fun x -> getAnswer drawn x)
-        score (iteration+1) numbers a boards
+let calculateScore drawn board = board.All |> Array.except drawn |> Array.sum |> (*) (Array.last drawn) |> Some
 
-let boards = "inputs/day04.txt" |> System.IO.File.ReadAllText |> fun s -> s.Split "\n\n" |> Seq.skip 1 |> Seq.map toBoard
-let numbers = "inputs/day04.txt" |> System.IO.File.ReadLines |> Seq.head |> fun s -> s.Split ',' |> Seq.map int
+let rec score iteration numbers scores (boards : Board array) =
+    match iteration = Seq.length numbers with
+    | true -> scores |> Seq.map Option.get
+    | false ->
+        let drawn = numbers |> Array.take iteration
+        let winners = boards |> Array.where (isWinner drawn)
+        let remaining = boards |> Array.except winners
+        let newScores = winners |> Array.map (calculateScore drawn)
+        score (iteration+1) numbers (scores |> Seq.append newScores) remaining
 
-// Answer 1
-score 5 numbers None boards |> printfn "%i"
+let boards = "inputs/day04.txt" |> System.IO.File.ReadAllText |> fun s -> s.Split "\n\n" |> Array.skip 1 |> Array.map toBoard
+let numbers = "inputs/day04.txt" |> System.IO.File.ReadLines |> Seq.head |> fun s -> s.Split ',' |> Array.map int
+
+// Answer 1 & 2
+score 5 numbers Seq.empty boards |> fun scores -> printfn "%i\n%i" (Seq.last scores) (Seq.head scores)
