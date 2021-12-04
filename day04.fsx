@@ -10,15 +10,15 @@ let toBoard (s : string) =
         let vertical = horizontal |> Array.transpose
         { All = all ; Lines = horizontal |> Array.append vertical }
 
-let isWinner drawn board = board.Lines |> Array.exists (Array.forall (fun number -> Array.contains number drawn))
+let isWinner drawn board = board.Lines |> Array.exists (Array.forall (fun number -> drawn |> Array.contains number ))
 
 let calculateScore drawn board = board.All |> Array.except drawn |> Array.sum |> ( * ) (Array.last drawn)
 
 let rec score drawn scores numbers boards =
-    match Array.isEmpty boards with
+    match boards |> Array.isEmpty with
     | true -> scores
     | false ->
-        let drawn = numbers |> Array.take (Array.length drawn |> (+) 1)
+        let drawn = numbers |> Array.take (drawn |> Array.length |> (+) 1)
         let winners = boards |> Array.where (isWinner drawn)
         let scores = scores |> Array.append (winners |> Array.map (calculateScore drawn))
         let remaining = boards |> Array.except winners
