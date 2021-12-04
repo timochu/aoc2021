@@ -14,11 +14,11 @@ let toBoard (s : string) =
 
 let isWinner drawn board = board.Lines |> Array.exists (fun line -> line |> Array.forall(fun number -> drawn |> Array.contains number))
 
-let calculateScore drawn board = board.All |> Array.except drawn |> Array.sum |> (*) (Array.last drawn) |> Some
+let calculateScore drawn board = board.All |> Array.except drawn |> Array.sum |> (*) (Array.last drawn)
 
 let rec score iteration numbers scores (boards : Board array) =
     match iteration = Seq.length numbers with
-    | true -> scores |> Seq.map Option.get
+    | true -> scores
     | false ->
         let drawn = numbers |> Array.take iteration
         let winners = boards |> Array.where (isWinner drawn)
