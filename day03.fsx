@@ -14,7 +14,7 @@ diagnostics
 // Answer 2
 type Criteria = Oxygen | CarbonDioxide
 
-let rec getRating i items criteria =
+let rec rating i items criteria =
     match items with
     | [| result |] -> System.Convert.ToInt32 (result, 2)
     | _ ->
@@ -24,6 +24,6 @@ let rec getRating i items criteria =
             | CarbonDioxide -> Seq.sortBy fst >> Seq.minBy snd
         let bit = items |> Seq.transpose |> Seq.item i |> Seq.countBy id |> bitSelector |> fst
         let remaining = items |> Array.where (fun bits -> bits.[i] = bit)
-        getRating (i+1) remaining criteria
+        rating (i+1) remaining criteria
 
-[Oxygen; CarbonDioxide] |> Seq.map (getRating 0 diagnostics) |> Seq.reduce (*) |> printfn "%i"
+[Oxygen; CarbonDioxide] |> Seq.map (rating 0 diagnostics) |> Seq.reduce (*) |> printfn "%i"
