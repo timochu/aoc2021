@@ -10,22 +10,21 @@ let toBoard (s : string) =
         let vertical = horizontal |> Array.transpose
         { All = all ; Lines = horizontal |> Array.append vertical }
 
-let isWinner drawn board = board.Lines |> Array.exists (fun line -> line |> Array.forall(fun number -> drawn |> Array.contains number))
+let isWinner drawn board = board.Lines |> Array.exists (Array.forall (fun number -> Array.contains number drawn))
 
 let calculateScore drawn board = board.All |> Array.except drawn |> Array.sum |> ( * ) (Array.last drawn)
 
-let rec score iteration scores numbers boards =
-    match iteration = Array.length numbers with
+let rec score drawn scores numbers boards =
+    match Array.isEmpty boards with
     | true -> scores
     | false ->
-        let drawn = numbers |> Array.take iteration
+        let drawn = numbers |> Array.take (Array.length drawn |> (+) 1)
         let winners = boards |> Array.where (isWinner drawn)
         let scores = scores |> Array.append (winners |> Array.map (calculateScore drawn))
         let remaining = boards |> Array.except winners
-        score (iteration+1) scores numbers remaining
+        score drawn scores numbers remaining
 
 let boards = "inputs/day04.txt" |> System.IO.File.ReadAllText |> fun s -> s.Split "\n\n" |> Array.skip 1 |> Array.map toBoard
 let numbers = "inputs/day04.txt" |> System.IO.File.ReadLines |> Seq.head |> fun s -> s.Split ',' |> Array.map int
 
-// Answer 1 & 2
-(numbers, boards) ||> score 0 Array.empty |> fun scores -> printfn "%i\n%i" (Array.last scores) (Array.head scores)
+score Array.empty Array.empty numbers boards |> fun scores -> printfn "%i\n%i" (Array.last scores) (Array.head scores)
