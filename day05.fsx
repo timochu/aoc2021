@@ -20,7 +20,6 @@ let getAllPoints ((x1 , y1) , (x2 , y2)) =
     else 
         [| 0 .. Array.length xs - 1 |] |> Array.map (fun i -> xs[i], ys[i])
 
-
 let overlapping = 
     Array.map getAllPoints
     >> Array.concat
