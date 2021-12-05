@@ -28,8 +28,8 @@ let overlapping =
 
 let lines = "inputs/day05.txt" |> System.IO.File.ReadAllLines |> Array.map toLine
 
-// // Answer 1
+// Answer 1
 lines |> Array.where isHorizontalOrVertical |> overlapping
 
-// // Answer 2
+// Answer 2
 lines |> overlapping
