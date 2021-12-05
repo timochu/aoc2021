@@ -1,9 +1,7 @@
 #time // puzzle: https://adventofcode.com/2021/day/5
 
 let toLine (s : string) =
-    s.Split " -> " 
-    |> Array.map (fun (x:string) -> x.Split ',')
-    |> Array.concat
+    s.Split ([|" -> "; ","|],  System.StringSplitOptions.RemoveEmptyEntries  )
     |> Array.map int
     |> fun p -> (p[0], p[1]) , (p[2], p[3])
 
