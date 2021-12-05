@@ -10,12 +10,10 @@ let isHorizontalOrVertical (x1, y1, x2 , y2) =
 
 let getAllPoints (x1, y1, x2, y2) =
     let step a b = if a > b then -1 else 1
-    let xs = [| x1 .. step x1 x2 .. x2 |]
-    let ys = [| y1 .. step y1 y2 .. y2 |]
-    if isHorizontalOrVertical (x1, y1, x2, y2) then
-        Array.allPairs xs ys
-    else 
-        Array.zip xs ys 
+    ([| x1 .. step x1 x2 .. x2 |] , [| y1 .. step y1 y2 .. y2 |])
+    ||> if isHorizontalOrVertical (x1, y1, x2, y2) 
+        then Array.allPairs 
+        else Array.zip 
 
 let overlapping = 
     Array.map getAllPoints
