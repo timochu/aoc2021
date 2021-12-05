@@ -9,8 +9,8 @@ let isHorizontalOrVertical (x1, y1, x2 , y2) =
     x1 = x2 || y1 = y2
 
 let getAllPoints (x1, y1, x2, y2) =
-    let xIncrement = if x1>x2 then -1 else 1
-    let yIncrement = if y1>y2 then -1 else 1
+    let xIncrement = if x1 > x2 then -1 else 1
+    let yIncrement = if y1 > y2 then -1 else 1
     let xs = [| x1 .. xIncrement .. x2 |]
     let ys = [| y1 .. yIncrement .. y2 |]
     if isHorizontalOrVertical (x1, y1, x2, y2) then
