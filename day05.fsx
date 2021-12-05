@@ -5,18 +5,16 @@ let toLine (s : string) =
     |> Array.map (fun (x:string) -> x.Split ',')
     |> Array.concat
     |> Array.map int
-    |> fun p -> (p[0], p[2]) , (p[1], p[3])
+    |> fun p -> (p[0], p[1]) , (p[2], p[3])
 
-let isHorizontalOrVertical ((x1 , x2) , (y1 , y2)) = x1 = x2 || y1 = y2
+let isHorizontalOrVertical ((x1 , y1) , (x2 , y2)) = x1 = x2 || y1 = y2
     
-let getAllPoints (line : (int * int) * (int * int)) =
-    match line with
-    | (x1,x2),(y1,y2) when x1 = x2 ->
-        if y1 > y2 then [| for i in y2 .. y1 -> (x1, i) |]
-        else            [| for i in y1 .. y2 -> (x1, i) |]
-    | (x1,x2),(y1,y2) when y1 = y2 ->
-        if x1 > x2 then [| for i in x2 .. x1 -> (i, y1) |]
-        else            [| for i in x1 .. x2 -> (i, y1) |]
+let getAllPoints ((x1 , y1) , (x2 , y2)) =
+    match x1 = x2, y1 = y2, y1 > y2, x1 > x2 with
+    | true, _, true, _  -> [| for i in y2 .. y1 -> (x1, i) |]
+    | true, _, false, _ -> [| for i in y1 .. y2 -> (x1, i) |]
+    | _, true, _, true  -> [| for i in x2 .. x1 -> (i, y1) |]
+    | _, true, _, false -> [| for i in x1 .. x2 -> (i, y1) |]
     | _ -> failwith "there was a diagonal line amongst the lines!"
     
 // Answer 1
