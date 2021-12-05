@@ -7,8 +7,7 @@ let toLine (s : string) =
     |> Array.map int
     |> fun p -> (p[0], p[2]) , (p[1], p[3])
 
-let isHorizontalOrVertical (line : (int * int) * (int * int)) =  
-    line |> fst ||> (=) || line |> snd ||> (=)
+let isHorizontalOrVertical ((x1 , x2) , (y1 , y2)) = x1 = x2 || y1 = y2
     
 let getAllPoints (line : (int * int) * (int * int)) =
     match line with
