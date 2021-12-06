@@ -1,16 +1,14 @@
 #time // puzzle: https://adventofcode.com/2021/day/6
 
-let fish = "inputs/day06.txt" |> System.IO.File.ReadAllText |> fun (s:string) -> s.Split ',' |> Array.map int
+let n num = Array.where ((=) num) >> Seq.length >> uint64
+let fish = "inputs/day06.txt" |> System.IO.File.ReadAllText |> fun (s:string) -> s.Split ',' |> Array.map int |> fun x -> [| n 0 x ; n 1 x ; n 2 x ; n 3 x; n 4 x; n 5 x; n 6 x; n 7 x ; n 8 x |]
 
-let rec counter i days fish =
-    if i = days then fish |> Array.length
-    else
-        let spawn = fish |> Array.where ((=) 0) |> Array.length |> (fun x -> Array.replicate x 8)
-        let fishes = fish |> Array.map (fun x -> x-1) |> Array.map (fun x -> if x < 0 then 6 else x) |> Array.append spawn
-        counter (i+1) days fishes
+let rec count days (fish : uint64 array) : uint64 =
+    if days = 0 then fish[0] + fish[1] + fish[2] + fish[3] + fish[4] + fish[5] + fish[6] + fish[7] + fish[8]
+    else count (days-1) [| fish[1]; fish[2]; fish[3]; fish[4]; fish[5]; fish[6]; fish[7] + fish[0]; fish[8]; fish[0] |]
 
 // Answer 1
-counter 0 80 fish |> printfn "%i"
+fish |> count 80 |> printfn "%i"
 
 // Answer 2
-// counter 0 256 fish |> printfn "%i"
+fish |> count 256 |> printfn "%i"
