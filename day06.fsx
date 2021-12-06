@@ -1,7 +1,9 @@
 #time // puzzle: https://adventofcode.com/2021/day/6
 
-let n num = Seq.where ((=) num) >> Seq.length >> int64
-let fish = "inputs/day06.txt" |> System.IO.File.ReadAllText |> fun (s:string) -> s.Split ',' |> fun x -> [ 0L; n "1" x; n "2" x; n "3" x; n "4" x; n "5" x; 0L; 0L; 0L ]
+let fish = 
+    let count num = Seq.where ((=) num) >> Seq.length >> int64
+    "inputs/day06.txt" |> System.IO.File.ReadAllText |> fun (s:string) -> s.Split ',' 
+    |> fun x -> [ 0L; count "1" x; count "2" x; count "3" x; count "4" x; count "5" x; 0L; 0L; 0L ]
 
 let rec count days f =
     if days = 0 then f |> Seq.sum
