@@ -1,4 +1,4 @@
-#time // puzzle: https://adventofcode.com/2021/day/6
+#time // puzzle: https://adventofcode.com/2021/day/7
 
 let positions = "inputs/day07.txt" |> System.IO.File.ReadAllText |> fun (s:string) -> s.Split ',' |> Seq.map int
 
