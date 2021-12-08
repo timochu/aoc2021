@@ -13,18 +13,18 @@ let split (separator:string array) (s:string) = s.Split (separator, System.Strin
 |> printfn "%A"
 
 // Answer 2
-let decipherSegments (digits : string array) =
+let getOutputValue (digits : string array) =
     let d = digits |> Array.map Seq.sort |> Array.map Concat |> Array.distinct |> Array.map Seq.toArray
-    let one = d |> Seq.where (Seq.length >> (=) 2) |> Seq.exactlyOne
-    let four = d |> Seq.where (Seq.length >> (=) 4) |> Seq.exactlyOne
+    let one =   d |> Seq.where (Seq.length >> (=) 2) |> Seq.exactlyOne
+    let four =  d |> Seq.where (Seq.length >> (=) 4) |> Seq.exactlyOne
     let seven = d |> Seq.where (Seq.length >> (=) 3) |> Seq.exactlyOne
     let eight = d |> Seq.where (Seq.length >> (=) 7) |> Seq.exactlyOne
     let three = d |> Seq.where (fun s -> s |> Seq.length = 5 && one |> Seq.forall (fun x -> s |> Seq.exists ((=) x))) |> Seq.exactlyOne
-    let nine = d |> Seq.where (fun s -> s |> Seq.length = 6 && three |> Seq.forall (fun x -> s |> Seq.exists ((=) x))) |> Seq.exactlyOne
-    let five = d |> Seq.except [ three ] |> Seq.where (Seq.length >> (=) 5) |> Seq.where (fun x -> x |> Seq.except nine |> Seq.isEmpty) |> Seq.exactlyOne
-    let two = d |> Seq.where (Seq.length >> (=) 5) |> Seq.except [five ; three] |> Seq.exactlyOne
-    let six = d |> Seq.where (Seq.length >> (=) 6) |> Seq.except [nine] |> Seq.where (fun x -> five |> Seq.except x |> Seq.isEmpty) |> Seq.exactlyOne
-    let zero = d |> Seq.except [one;two;three;four;five;six;seven;eight;nine] |> Seq.exactlyOne
+    let nine =  d |> Seq.where (fun s -> s |> Seq.length = 6 && three |> Seq.forall (fun x -> s |> Seq.exists ((=) x))) |> Seq.exactlyOne
+    let five =  d |> Seq.except [ three ] |> Seq.where (Seq.length >> (=) 5) |> Seq.where (fun x -> x |> Seq.except nine |> Seq.isEmpty) |> Seq.exactlyOne
+    let two =   d |> Seq.where (Seq.length >> (=) 5) |> Seq.except [five ; three] |> Seq.exactlyOne
+    let six =   d |> Seq.where (Seq.length >> (=) 6) |> Seq.except [nine] |> Seq.where (fun x -> five |> Seq.except x |> Seq.isEmpty) |> Seq.exactlyOne
+    let zero =  d |> Seq.except [one;two;three;four;five;six;seven;eight;nine] |> Seq.exactlyOne
 
     let mapper = 
         Map [ 
@@ -49,6 +49,6 @@ let decipherSegments (digits : string array) =
 "inputs/day08.txt" 
 |> System.IO.File.ReadAllLines 
 |> Array.map (split [|" | "; " "|])
-|> Array.map decipherSegments
+|> Array.map getOutputValue
 |> Array.sum
 |> printfn "%A" 
