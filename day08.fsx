@@ -11,15 +11,15 @@
 
 // Answer 2
 let getOutputValue d =
-    let d1 = d |> Seq.where (Seq.length >> (=) 2) |> Seq.head
-    let d4 = d |> Seq.where (Seq.length >> (=) 4) |> Seq.head
-    let d7 = d |> Seq.where (Seq.length >> (=) 3) |> Seq.head
-    let d8 = d |> Seq.where (Seq.length >> (=) 7) |> Seq.head
-    let d3 = d |> Seq.where (Seq.length >> (=) 5) |> Seq.where (Set.isSubset d1) |> Seq.head
-    let d9 = d |> Seq.where (Seq.length >> (=) 6) |> Seq.where (Set.isSubset d3) |> Seq.head
-    let d5 = d |> Seq.where (Seq.length >> (=) 5) |> Seq.except [d3]  |> Seq.where (Set.isSuperset d9) |> Seq.head
-    let d2 = d |> Seq.where (Seq.length >> (=) 5) |> Seq.except [d5;d3] |>  Seq.head
-    let d6 = d |> Seq.where (Seq.length >> (=) 6) |> Seq.except [d9] |> Seq.where (Set.isSubset d5) |> Seq.head
+    let d1 = d |> Seq.find (Seq.length >> (=) 2)
+    let d4 = d |> Seq.find (Seq.length >> (=) 4)
+    let d7 = d |> Seq.find (Seq.length >> (=) 3) 
+    let d8 = d |> Seq.find (Seq.length >> (=) 7)
+    let d3 = d |> Seq.find (fun x -> Seq.length x = 5 && Set.isSubset d1 x)
+    let d9 = d |> Seq.find (fun x -> Seq.length x = 6 && Set.isSubset d3 x)
+    let d5 = d |> Seq.except [d3] |> Seq.find (fun x -> Seq.length x = 5 && Set.isSuperset d9 x)
+    let d2 = d |> Seq.except [d5;d3] |> Seq.find (Seq.length >> (=) 5)
+    let d6 = d |> Seq.except [d9] |> Seq.find (fun x -> Seq.length x = 6 && Set.isSubset d5 x)
     let d0 = d |> Seq.except [d1;d2;d3;d4;d5;d6;d7;d8;d9] |> Seq.head
     let mapper y = [d0;d1;d2;d3;d4;d5;d6;d7;d8;d9] |> Seq.findIndex ((=) y) |> string
     d |> Seq.skip 10 |> Seq.map mapper |> Seq.reduce (+) |> int
