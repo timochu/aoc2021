@@ -6,7 +6,7 @@ let split (separator:string array) (s:string) = s.Split (separator, System.Strin
 // Answer 1
 "inputs/day08.txt" 
 |> System.IO.File.ReadAllLines 
-|> Seq.map (split [|" | "|] >> Seq.last >> split [|" "|]) 
+|> Seq.map (fun (s:string) -> s.Split " | " |> Seq.last |> fun (x:string) -> x.Split " ") 
 |> Seq.concat 
 |> Seq.where (fun x -> x.Length < 5 || x.Length = 7)
 |> Seq.length
@@ -14,41 +14,23 @@ let split (separator:string array) (s:string) = s.Split (separator, System.Strin
 
 // Answer 2
 let getOutputValue (digits : string array) =
-    let d = digits |> Array.map Seq.sort |> Array.map Concat |> Array.distinct |> Array.map Seq.toArray
-    let one =   d |> Seq.where (Seq.length >> (=) 2) |> Seq.exactlyOne
-    let four =  d |> Seq.where (Seq.length >> (=) 4) |> Seq.exactlyOne
-    let seven = d |> Seq.where (Seq.length >> (=) 3) |> Seq.exactlyOne
-    let eight = d |> Seq.where (Seq.length >> (=) 7) |> Seq.exactlyOne
-    let three = d |> Seq.where (fun s -> s |> Seq.length = 5 && one |> Seq.forall (fun x -> s |> Seq.exists ((=) x))) |> Seq.exactlyOne
-    let nine =  d |> Seq.where (fun s -> s |> Seq.length = 6 && three |> Seq.forall (fun x -> s |> Seq.exists ((=) x))) |> Seq.exactlyOne
-    let five =  d |> Seq.except [ three ] |> Seq.where (Seq.length >> (=) 5) |> Seq.where (fun x -> x |> Seq.except nine |> Seq.isEmpty) |> Seq.exactlyOne
-    let two =   d |> Seq.where (Seq.length >> (=) 5) |> Seq.except [five ; three] |> Seq.exactlyOne
-    let six =   d |> Seq.where (Seq.length >> (=) 6) |> Seq.except [nine] |> Seq.where (fun x -> five |> Seq.except x |> Seq.isEmpty) |> Seq.exactlyOne
-    let zero =  d |> Seq.except [one;two;three;four;five;six;seven;eight;nine] |> Seq.exactlyOne
-
-    let mapper = 
-        Map [ 
-            (zero   |> Concat, "0"); 
-            (one    |> Concat, "1"); 
-            (two    |> Concat, "2"); 
-            (three  |> Concat, "3"); 
-            (four   |> Concat, "4"); 
-            (five   |> Concat, "5"); 
-            (six    |> Concat, "6"); 
-            (seven  |> Concat, "7"); 
-            (eight  |> Concat, "8"); 
-            (nine   |> Concat, "9") ]
-
-    digits 
-    |> Array.skip 10
-    |> Array.map (Seq.sort >> Concat >> fun x -> mapper.[x])
-    |> Array.reduce (+)
-    |> int
-
+    let d = digits |> Seq.map Seq.sort |> Seq.map Concat |> Seq.distinct
+    let one     = d |> Seq.where (Seq.length >> (=) 2) |> Seq.head
+    let four    = d |> Seq.where (Seq.length >> (=) 4) |> Seq.head
+    let seven   = d |> Seq.where (Seq.length >> (=) 3) |> Seq.head
+    let eight   = d |> Seq.where (Seq.length >> (=) 7) |> Seq.head
+    let three   = d |> Seq.where (Seq.length >> (=) 5) |> Seq.where (fun s -> one |> Seq.except s |> Seq.isEmpty) |> Seq.head
+    let nine    = d |> Seq.where (Seq.length >> (=) 6) |> Seq.where (fun s -> three |> Seq.except s |> Seq.isEmpty) |> Seq.head
+    let five    = d |> Seq.except [three] |> Seq.where (Seq.length >> (=) 5) |> Seq.where (fun x -> x |> Seq.except nine |> Seq.isEmpty) |> Seq.head
+    let two     = d |> Seq.except [five;three] |> Seq.where (Seq.length >> (=) 5) |>  Seq.head
+    let six     = d |> Seq.except [nine] |> Seq.where (Seq.length >> (=) 6) |> Seq.where (fun x -> five |> Seq.except x |> Seq.isEmpty) |> Seq.head
+    let zero    = d |> Seq.except [one;two;three;four;five;six;seven;eight;nine] |> Seq.head
+    let mapper = Map [ (zero, '0'); (one, '1'); (two, '2'); (three, '3'); (four, '4'); (five, '5'); (six, '6'); (seven, '7'); (eight, '8'); (nine, '9') ]
+    digits |> Seq.skip 10 |> Seq.map (Seq.sort >> Concat >> fun x -> mapper.[x]) |> Concat |> int
 
 "inputs/day08.txt" 
 |> System.IO.File.ReadAllLines 
-|> Array.map (split [|" | "; " "|])
-|> Array.map getOutputValue
-|> Array.sum
+|> Seq.map (fun (s:string) -> s.Split([|" | "; " "|], System.StringSplitOptions.RemoveEmptyEntries))
+|> Seq.map getOutputValue
+|> Seq.sum
 |> printfn "%A" 
