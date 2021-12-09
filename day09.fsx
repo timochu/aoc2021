@@ -23,24 +23,25 @@ let isLowerThanAdjacent (index, value) =
 
 let lowPoints = heightmap |> Array.where isLowerThanAdjacent 
 
-// Answer 1
-lowPoints |> Array.sumBy (snd >> (+) 1) |> printfn "%i"
-
-// Answer 2
-let rec getBasinSize points length =
-    let basin = 
+let getBasinSize point =
+    let rec expander points length =
         points
         |> Array.collect (fst >> getAdjacentValues) 
         |> Array.where (fun (_,p) -> p < 9 ) 
         |> Array.append points 
         |> Array.distinctBy fst
-    match basin.Length = length with 
-    | true -> length
-    | false -> getBasinSize basin basin.Length
+        |> function 
+        | basin when basin.Length = length -> length
+        | basin -> expander basin basin.Length
+    expander [|point|] 0
 
-lowPoints 
-|> Array.map (fun p -> getBasinSize [|p|] 0)
-|> Array.sortDescending 
-|> Array.take 3 
-|> Array.reduce (*) 
+// Answer 1
+lowPoints |> Array.sumBy (snd >> (+) 1) |> printfn "%i"
+
+// Answer 2
+lowPoints
+|> Array.map getBasinSize
+|> Array.sortDescending
+|> Array.take 3
+|> Array.reduce (*)
 |> printfn "%i"
