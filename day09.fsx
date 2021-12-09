@@ -19,7 +19,7 @@ let getAdjacentValues i =
        if i + width < length then yield heightmap[i+width] |]
 
 let isLowerThanAdjacent (index, value) = 
-    index |> getAdjacentValues |> Seq.minBy snd |> snd |> (<) value
+    index |> getAdjacentValues |> Array.minBy snd |> snd |> (<) value
 
 let lowPoints = heightmap |> Array.where isLowerThanAdjacent 
 
@@ -27,15 +27,19 @@ let lowPoints = heightmap |> Array.where isLowerThanAdjacent
 lowPoints |> Array.sumBy (snd >> (+) 1) |> printfn "%i"
 
 // Answer 2
-let rec getBasinSize (points : (int*int) array) length : int = // (pointIndex : int, point : int)
-    let adjacent = points |> Array.collect (fun (i,_) -> getAdjacentValues i) |> Array.where (fun (_,p) -> p < 9 ) |> Array.distinctBy fst
-    let basin = adjacent |> Array.append points |> Array.distinctBy fst
-    let newLength = basin.Length
-    if newLength = length then length
-    else getBasinSize basin newLength
+let rec getBasinSize points length =
+    let basin = 
+        points
+        |> Array.collect (fst >> getAdjacentValues) 
+        |> Array.where (fun (_,p) -> p < 9 ) 
+        |> Array.append points 
+        |> Array.distinctBy fst
+    match basin.Length = length with 
+    | true -> length
+    | false -> getBasinSize basin basin.Length
 
 lowPoints 
-|> Array.map (fun p -> getBasinSize [|p|] 0) 
+|> Array.map (fun p -> getBasinSize [|p|] 0)
 |> Array.sortDescending 
 |> Array.take 3 
 |> Array.reduce (*) 
