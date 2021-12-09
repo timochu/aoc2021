@@ -28,7 +28,8 @@ let getOutputValue d =
 
 "inputs/day08.txt" 
 |> System.IO.File.ReadAllLines 
-|> Seq.map (fun (s:string) -> s.Split([|" | "; " "|], System.StringSplitOptions.RemoveEmptyEntries))
-|> Seq.map (Seq.map Set >> getOutputValue)
-|> Seq.sum
+|> Seq.sumBy (fun (s:string) -> 
+    s.Split([|" | "; " "|], System.StringSplitOptions.RemoveEmptyEntries) 
+    |> Seq.map Set
+    |> getOutputValue)
 |> printfn "%A" 
