@@ -12,23 +12,23 @@ let heightmap =
 let width = file |> System.IO.File.ReadLines |> Seq.head |> Seq.length
 let length = Array.length heightmap
 
-let getAdjacentValues i = 
+let getAdjacentValues (i,_) = 
     [| if i % width <> 0 then yield heightmap[i-1]
        if i % width <> width - 1 then yield heightmap[i+1]
        if i - width >= 0 then yield heightmap[i-width]
        if i + width < length then yield heightmap[i+width] |]
 
-let isLowerThanAdjacent (index, value) = 
-    index |> getAdjacentValues |> Array.minBy snd |> snd |> (<) value
+let isLowerThanAdjacent (i, p) =
+    (i, p) |> getAdjacentValues |> Array.forall (fun (_, ap) -> p < ap) 
 
 let lowPoints = heightmap |> Array.where isLowerThanAdjacent 
 
 let getBasinSize point =
     let rec expander points length =
         points
-        |> Array.collect (fst >> getAdjacentValues) 
-        |> Array.where (fun (_,p) -> p < 9 ) 
-        |> Array.append points 
+        |> Array.collect getAdjacentValues
+        |> Array.where (fun (_,p) -> p < 9 )
+        |> Array.append points
         |> Array.distinctBy fst
         |> function 
         | basin when basin.Length = length -> length
