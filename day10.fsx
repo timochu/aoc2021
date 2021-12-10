@@ -46,10 +46,13 @@ let autocompletePoints (chunks : char list list) =
     |> List.map (fun x -> scores2.Item x)
     |> List.fold (fun acc s -> (acc * 5L) + s) 0L
 
+let chunks = 
+    "inputs/day10test.txt" 
+    |> System.IO.File.ReadAllLines 
+    |> Array.map (Seq.toList >> chunkify)
+
 // // Answer 1
-"inputs/day10test.txt" 
-|> System.IO.File.ReadAllLines 
-|> Array.map (Seq.toList >> chunkify)
+chunks
 |> Array.where (List.exists isCorrupt)
 |> Array.map (List.where isCorrupt >> List.map List.last)
 |> List.concat
@@ -58,11 +61,9 @@ let autocompletePoints (chunks : char list list) =
 |> printfn "%i"
 
 // // Answer 2
-"inputs/day10.txt" 
-|> System.IO.File.ReadAllLines 
-|> Array.map (Seq.toList >> chunkify)
+chunks
 |> Array.where (List.exists isCorrupt >> not)
 |> Array.map autocompletePoints
 |> Array.sort
-|> fun x -> x[x.Length/2]
+|> fun scores -> scores[scores.Length / 2]
 |> printfn "%A"
