@@ -43,7 +43,7 @@ let calculateAutocompleteScore chunks =
     |> List.map (fun x -> scores2.Item x)
     |> List.fold (fun acc s -> (acc * 5L) + s) 0L
 
-let chunks = "inputs/day10test.txt" |> System.IO.File.ReadAllLines |> Array.map toChunks
+let chunks = "inputs/day10.txt" |> System.IO.File.ReadAllLines |> Array.map toChunks
 
 // // Answer 1
 chunks
