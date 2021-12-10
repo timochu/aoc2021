@@ -20,20 +20,17 @@ let isCorrupt x = isCompleteChunk x && hasMismatchingBrackets x
 
 let toChunks line =
     let rec chunk (chunks : char list list) (aggregate : char list) (remaining : char list) =
-        match openingCount remaining with
-        | 0 -> chunks
+        let newRemaining = remaining.Tail |> List.skipWhile closings.Contains
+        match newRemaining with
+        | [] -> aggregate :: chunks
         | _ ->
             let newAggregate = 
                 match remaining |> List.tryItem aggregate.Length with
                 | Some i -> aggregate @ [i]
                 | None -> aggregate
             match aggregate.Length = newAggregate.Length || isCompleteChunk newAggregate with
-            | true -> 
-                match remaining.Tail |> List.skipWhile closings.Contains with
-                | [] -> newAggregate :: chunks
-                | startFrom -> chunk (newAggregate::chunks) [startFrom.Head] startFrom
-            | false ->
-                chunk chunks newAggregate remaining
+            | true -> chunk (newAggregate::chunks) [newRemaining.Head] newRemaining
+            | false -> chunk chunks newAggregate remaining
     chunk [] [Seq.head line] (line |> Seq.toList)
 
 let calculateAutocompleteScore chunks =
