@@ -22,6 +22,7 @@ let toChunks line =
     let rec chunk (chunks : char list list) (aggregate : char list) (remaining : char list) =
         match openingCount remaining with
         | 0 -> chunks
+
         | _ ->
             let newAggregate = 
                 match remaining |> List.tryItem aggregate.Length with
@@ -34,6 +35,7 @@ let toChunks line =
                 | startFrom -> chunk (newAggregate::chunks) [startFrom.Head] startFrom
             | false ->
                 chunk chunks newAggregate remaining
+
     chunk [] [Seq.head line] (line |> Seq.toList)
 
 let calculateAutocompleteScore chunks =
