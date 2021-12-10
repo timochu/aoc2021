@@ -5,8 +5,6 @@ let closings = Set ")]}>"
 let scores1 = Map [(')', 3) ; (']', 57) ; ('}', 1197) ; ('>', 25137)] 
 let scores2 = Map [(')', 1L) ; (']', 2L) ; ('}', 3L) ; ('>', 4L)] 
 
-let getClosing char = closings |> Seq.item (openings |> Seq.findIndex ((=) char))
-
 let openingCount = Seq.where openings.Contains >> Seq.length
 
 let closingCount = Seq.where closings.Contains >> Seq.length
@@ -38,6 +36,7 @@ let toChunks line =
     chunk [] [Seq.head line] (line |> Seq.toList)
 
 let calculateAutocompleteScore chunks =
+    let getClosing char = closings |> Seq.item (openings |> Seq.findIndex ((=) char))
     chunks 
     |> List.where (isCompleteChunk >> not) 
     |> List.map (List.head >> getClosing)
