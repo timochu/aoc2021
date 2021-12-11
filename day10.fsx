@@ -31,7 +31,7 @@ let toChunks line =
             match aggregate.Length = newAggregate.Length || isCompleteChunk newAggregate with
             | true -> chunk (newAggregate::chunks) [] newRemaining
             | false -> chunk chunks newAggregate remaining
-    chunk [] [] (line |> Seq.toList)
+    chunk [] [] line
 
 let calculateAutocompleteScore chunks =
     let getClosing char = closings |> Seq.item (openings |> Seq.findIndex ((=) char))
@@ -41,7 +41,7 @@ let calculateAutocompleteScore chunks =
     |> List.map (fun x -> scores2.Item x)
     |> List.fold (fun acc s -> (acc * 5L) + s) 0L
 
-let chunks = "inputs/day10.txt" |> System.IO.File.ReadAllLines |> Array.map toChunks
+let chunks = "inputs/day10.txt" |> System.IO.File.ReadAllLines |> Array.map (Seq.toList >> toChunks)
 
 // // Answer 1
 chunks
